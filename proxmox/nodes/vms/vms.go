@@ -142,7 +142,7 @@ func (c *Client) DeleteVMAsync(ctx context.Context) (*string, error) {
 
 	err := retry.Do(
 		func() error {
-			return c.DoRequest(ctx, http.MethodDelete, c.ExpandPath("?destroy-unreferenced-disks=1&purge=1"), nil, resBody)
+			return c.DoRequest(ctx, http.MethodDelete, c.ExpandPath("?destroy-unreferenced-disks=0&purge=1"), nil, resBody)
 		},
 		retry.Context(ctx),
 		retry.Attempts(3),

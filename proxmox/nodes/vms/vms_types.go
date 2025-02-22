@@ -114,6 +114,15 @@ func (b *CreateRequestBody) AddCustomStorageDevice(iface string, device CustomSt
 	b.CustomStorageDevices[iface] = &device
 }
 
+// RemoveCustomStorageDevice removes a custom storage device to the create request body.
+func (b *CreateRequestBody) RemoveCustomStorageDevice(iface string) {
+	if b.Delete == nil {
+		b.Delete = make([]string, 1)
+	}
+
+	b.Delete[0] = iface
+}
+
 // CreateResponseBody contains the body from a create response.
 type CreateResponseBody struct {
 	TaskID *string `json:"data,omitempty"`

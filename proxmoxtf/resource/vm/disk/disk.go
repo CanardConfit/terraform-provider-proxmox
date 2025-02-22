@@ -569,6 +569,13 @@ func Update(
 	rebootRequired := false
 
 	if d.HasChange(MkDisk) {
+		for iface, disk := range currentDisks {
+			if planDisks[iface] == nil && disk != nil {
+				rebootRequired = true
+				updateBody.RemoveCustomStorageDevice(iface)
+			}
+		}
+
 		for iface, disk := range planDisks {
 			var tmp *vms.CustomStorageDevice
 
