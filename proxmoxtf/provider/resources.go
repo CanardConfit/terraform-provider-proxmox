@@ -22,6 +22,7 @@ func createResourceMap() map[string]*schema.Resource {
 		"proxmox_virtual_environment_cluster_firewall":                clusterfirewall.Firewall(),
 		"proxmox_virtual_environment_cluster_firewall_security_group": clusterfirewall.SecurityGroup(),
 		"proxmox_virtual_environment_container":                       container.Container(),
+		"proxmox_virtual_environment_disk":                            resource.Disk(),
 		"proxmox_virtual_environment_dns":                             resource.DNS(),
 		"proxmox_virtual_environment_file":                            resource.File(),
 		"proxmox_virtual_environment_firewall_alias":                  firewall.Alias(),
