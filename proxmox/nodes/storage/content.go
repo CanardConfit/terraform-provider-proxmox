@@ -103,3 +103,22 @@ func (c *Client) GetDatastoreFile(
 
 	return resBody.Data, nil
 }
+
+// CreateDatastoreFile creates a new file in a datastore.
+func (c *Client) CreateDatastoreFile(
+	ctx context.Context,
+	d *DatastoreFileCreateRequest,
+) (*string, error) {
+	resBody := &DatastoreFileCreateResponseBody{}
+
+	err := c.DoRequest(ctx, http.MethodPost, c.ExpandPath("content"), d, resBody)
+	if err != nil {
+		return nil, fmt.Errorf("error creating file: %w", err)
+	}
+
+	if resBody.Data == nil {
+		return nil, api.ErrNoDataObjectInResponse
+	}
+
+	return resBody.Data, nil
+}
