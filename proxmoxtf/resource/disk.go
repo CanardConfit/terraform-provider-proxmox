@@ -32,6 +32,9 @@ const (
 	mkResourceVirtualEnvironmentDiskFormat    = "format"
 	mkResourceVirtualEnvironmentDiskPath      = "path"
 	mkResourceVirtualEnvironmentDiskSpaceUsed = "space_used"
+	mkResourceVirtualEnvironmentDiskSizeGb    = "size_gb"
+	mkResourceVirtualEnvironmentDiskSizeMb    = "size_mb"
+	mkResourceVirtualEnvironmentDiskSizeBytes = "size_bytes"
 )
 
 // Disk returns a resource that manages disks.
@@ -72,6 +75,21 @@ func Disk() *schema.Resource {
 				Description: "Size in kilobyte (1024 bytes). Optional suffixes 'M' (megabyte, 1024K) and 'G' (gigabyte, 1024M).",
 				Required:    true,
 				ForceNew:    true,
+			},
+			mkResourceVirtualEnvironmentDiskSizeGb: {
+				Type:        schema.TypeInt,
+				Description: "Disk size in gigabytes",
+				Computed:    true,
+			},
+			mkResourceVirtualEnvironmentDiskSizeMb: {
+				Type:        schema.TypeInt,
+				Description: "Disk size in megabytes",
+				Computed:    true,
+			},
+			mkResourceVirtualEnvironmentDiskSizeBytes: {
+				Type:        schema.TypeInt,
+				Description: "Disk size in bytes",
+				Computed:    true,
 			},
 			mkResourceVirtualEnvironmentDiskVmId: {
 				Type:        schema.TypeInt,
@@ -139,6 +157,9 @@ func Disk() *schema.Resource {
 					size = strconv.Itoa(int(*disk.FileSize))
 				}
 
+				d.Set(mkResourceVirtualEnvironmentDiskSizeBytes, *disk.FileSize)
+				d.Set(mkResourceVirtualEnvironmentDiskSizeGb, sizeG)
+				d.Set(mkResourceVirtualEnvironmentDiskSizeMb, sizeM)
 				d.Set(mkResourceVirtualEnvironmentDiskFormat, disk.FileFormat)
 				d.Set(mkResourceVirtualEnvironmentDiskSize, size)
 				d.Set(mkResourceVirtualEnvironmentDiskPath, disk.Path)
@@ -216,6 +237,10 @@ func diskRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.D
 
 		return diag.FromErr(err)
 	}
+
+	d.Set(mkResourceVirtualEnvironmentDiskSizeBytes, *disk.FileSize)
+	d.Set(mkResourceVirtualEnvironmentDiskSizeMb, *disk.FileSize/1024/1024)
+	d.Set(mkResourceVirtualEnvironmentDiskSizeGb, *disk.FileSize/1024/1024/1024)
 
 	d.Set(mkResourceVirtualEnvironmentDiskPath, disk.Path)
 	d.Set(mkResourceVirtualEnvironmentDiskSpaceUsed, disk.SpaceUsed)

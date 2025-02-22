@@ -33,6 +33,9 @@ resource "proxmox_virtual_environment_disk" "my_disk" {
 
 - `path` - The path of the disk within the datastore.
 - `space_used` - Space used on the disk.
+- `size_gb` - Size of the disk in gigabytes
+- `size_mb` - Size of the disk in megabytes
+- `size_bytes` - Size of the disk in bytes
 
 ## Import
 
