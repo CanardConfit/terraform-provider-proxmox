@@ -81,6 +81,7 @@ func Disk() *schema.Resource {
 			mkResourceVirtualEnvironmentDiskFormat: {
 				Type:     schema.TypeString,
 				Optional: true,
+				Default:  "raw",
 			},
 			mkResourceVirtualEnvironmentDiskPath: {
 				Type:     schema.TypeString,
