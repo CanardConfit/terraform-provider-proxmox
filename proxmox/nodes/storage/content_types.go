@@ -40,3 +40,16 @@ type DatastoreFileGetResponseData struct {
 	FileSize   *int64  `json:"size"           url:"size,omitempty"`
 	SpaceUsed  *int64  `json:"used,omitempty" url:"used,omitempty"`
 }
+
+type DatastoreFileCreateRequest struct {
+	Filename   string  `json:"filename"         url:"filename"`
+	NodeID     string  `json:"node"             url:"node"`
+	StorageID  string  `json:"storage"          url:"storage"`
+	FileSize   string  `json:"size"             url:"size"`
+	VMID       int     `json:"vmid"             url:"vmid"`
+	FileFormat *string `json:"format,omitempty" url:"format,omitempty"`
+}
+
+type DatastoreFileCreateResponseBody struct {
+	Data *string `json:"data,omitempty"`
+}
