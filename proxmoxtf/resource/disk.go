@@ -10,6 +10,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -99,13 +101,48 @@ func Disk() *schema.Resource {
 		UpdateContext: diskUpdate,
 		DeleteContext: diskDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(_ context.Context, d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
-				diskID := d.Id()
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				config := m.(proxmoxtf.ProviderConfiguration)
 
-				err := d.Set(mkResourceVirtualEnvironmentDiskId, diskID)
+				client, err := config.GetClient()
 				if err != nil {
-					return nil, fmt.Errorf("failed setting state during import: %w", err)
+					return nil, err
 				}
+
+				diskID := d.Id()
+				parts := strings.SplitN(diskID, ":", 3)
+
+				d.Set(mkResourceVirtualEnvironmentDiskId, diskID)
+				d.Set(mkResourceVirtualEnvironmentDiskNode, parts[0])
+				d.Set(mkResourceVirtualEnvironmentDiskStorage, parts[1])
+				d.Set(mkResourceVirtualEnvironmentDiskName, parts[2])
+
+				disk, err := client.Node(parts[0]).Storage(parts[1]).GetDatastoreFile(ctx, parts[2])
+				if err != nil {
+					return nil, err
+				}
+
+				parts = strings.SplitN(parts[2], "-", 3)
+				vmid, _ := strconv.Atoi(parts[1])
+				d.Set(mkResourceVirtualEnvironmentDiskVmId, vmid)
+				d.Set(mkResourceVirtualEnvironmentDiskSuffix, parts[2])
+
+				sizeM := (*disk.FileSize) / 1024 / 1024
+				sizeG := sizeM / 1024
+
+				var size string
+				if sizeG*1024*1024*1024 == *disk.FileSize {
+					size = fmt.Sprintf("%dG", sizeG)
+				} else if sizeM*1024*1024 == *disk.FileSize {
+					size = fmt.Sprintf("%dM", sizeG)
+				} else {
+					size = strconv.Itoa(int(*disk.FileSize))
+				}
+
+				d.Set(mkResourceVirtualEnvironmentDiskFormat, disk.FileFormat)
+				d.Set(mkResourceVirtualEnvironmentDiskSize, size)
+				d.Set(mkResourceVirtualEnvironmentDiskPath, disk.Path)
+				d.Set(mkResourceVirtualEnvironmentDiskSpaceUsed, disk.SpaceUsed)
 
 				return []*schema.ResourceData{d}, nil
 			},
