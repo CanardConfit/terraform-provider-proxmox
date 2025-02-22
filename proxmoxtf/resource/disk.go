@@ -40,7 +40,7 @@ func Disk() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			mkResourceVirtualEnvironmentDiskId: {
 				Type:        schema.TypeString,
-				Description: "ID of the disk in the format <datastore>:vm-<vmid>-<name>",
+				Description: "ID of the disk in the format <node>:<datastore>:vm-<vmid>-<name>.",
 				Computed:    true,
 			},
 			mkResourceVirtualEnvironmentDiskSuffix: {
@@ -57,25 +57,25 @@ func Disk() *schema.Resource {
 			},
 			mkResourceVirtualEnvironmentDiskNode: {
 				Type:        schema.TypeString,
-				Description: "The cluster node name",
+				Description: "The cluster node name.",
 				Required:    true,
 				ForceNew:    true,
 			},
 			mkResourceVirtualEnvironmentDiskStorage: {
 				Type:        schema.TypeString,
-				Description: "The storage identifier",
+				Description: "The storage identifier.",
 				Required:    true,
 				ForceNew:    true,
 			},
 			mkResourceVirtualEnvironmentDiskSize: {
 				Type:        schema.TypeString,
-				Description: "Size in kilobyte (1024 bytes). Optional suffixes 'M' (megabyte, 1024K) and 'G' (gigabyte, 1024M)",
+				Description: "Size in kilobyte (1024 bytes). Optional suffixes 'M' (megabyte, 1024K) and 'G' (gigabyte, 1024M).",
 				Required:    true,
 				ForceNew:    true,
 			},
 			mkResourceVirtualEnvironmentDiskVmId: {
 				Type:        schema.TypeInt,
-				Description: "Specify owner VM",
+				Description: "Specify owner VM.",
 				Optional:    true,
 				Default:     999,
 				ForceNew:    true,
