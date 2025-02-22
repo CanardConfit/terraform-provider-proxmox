@@ -223,7 +223,7 @@ func diskRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.D
 }
 
 func diskUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return diskRead(ctx, d, m)
+	return diag.Errorf("Cannot update a disk in-place")
 }
 
 func diskDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
