@@ -5417,6 +5417,10 @@ func vmUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.D
 	}
 
 	// Update the configuration now that everything has been prepared.
+	if updateBody.Delete != nil {
+		del = append(del, updateBody.Delete...)
+	}
+
 	updateBody.Delete = del
 
 	e = vmAPI.UpdateVM(ctx, updateBody)
@@ -5558,10 +5562,19 @@ func vmUpdateDiskLocationAndSize(
 
 		for oldIface, oldDisk := range diskOldEntries {
 			if _, present := diskNewEntries[oldIface]; !present {
-				return diag.Errorf(
-					"deletion of disks not supported. Please delete disk by hand. Old interface was %q",
-					oldIface,
-				)
+				dev, p := diskOldEntries[oldIface]
+				if !p {
+					return diag.Errorf("Cannot find disk %s", oldIface)
+				}
+
+				if dev.IsOwnedBy(vmID) {
+					return diag.Errorf(
+						"deletion of owned disks not supported. Please delete disk by hand. Old interface was %q",
+						oldIface,
+					)
+				}
+
+				continue
 			}
 
 			if *oldDisk.DatastoreID != *diskNewEntries[oldIface].DatastoreID {
